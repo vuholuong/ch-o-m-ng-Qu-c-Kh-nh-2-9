@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kỷ Niệm Ngày Quốc Khánh 2/9 - Việt Nam</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ff0000 0%, #ffdd00 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .hero-section {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(rgba(255,0,0,0.3), rgba(255,221,0,0.3)),
+            url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23ff0000" width="1200" height="600"/><polygon fill="%23ffdd00" points="600,150 650,200 750,200 675,250 700,350 600,300 500,350 525,250 450,200 550,200"/></svg>');
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Hiệu ứng cờ bay phấp phới */
+        .flag-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 120px;
+            height: 80px;
+            z-index: 1000;
+            perspective: 500px;
+        }
+
+        .flag {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #ff0000 0%, #ff0000 100%);
+            border-radius: 5px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            position: relative;
+            transform-style: preserve-3d;
+            animation: waveFlag 3s infinite ease-in-out;
+            overflow: hidden;
+        }
+
+        .flag::before {
+            content: '⭐';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            color: #ffdd00;
+            animation: starGlow 2s ease-in-out infinite alternate;
+            z-index: 2;
+        }
+
+        /* Tạo hiệu ứng gợn sóng cho cờ */
+        .flag::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(90deg,
+            rgba(255,0,0,0.1) 0%,
+            rgba(255,255,255,0.2) 50%,
+            rgba(255,0,0,0.1) 100%);
+            animation: waveLine 3s infinite linear;
+            transform: translateX(-50%);
+        }
+
+        @keyframes waveFlag {
+            0%, 100% {
+                transform: rotate(0deg) translateY(0) rotateY(0deg);
+            }
+            25% {
+                transform: rotate(2deg) translateY(-3px) rotateY(5deg);
+            }
+            50% {
+                transform: rotate(0deg) translateY(-5px) rotateY(0deg);
+            }
+            75% {
+                transform: rotate(-2deg) translateY(-3px) rotateY(-5deg);
+            }
+        }
+
+        @keyframes waveLine {
+            0% { transform: translateX(-50%) skewX(-20deg); }
+            100% { transform: translateX(0%) skewX(-20deg); }
+        }
+
+        @keyframes starGlow {
+            0% { text-shadow: 0 0 5px #ffdd00; }
+            100% { text-shadow: 0 0 20px #ffdd00, 0 0 30px #ffdd00; }
+        }
+
+        .main-title {
+            text-align: center;
+            color: #fff;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.7);
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        .main-title h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .main-title h2 {
+            font-size: 2.5rem;
+            color: #ffdd00;
+            margin-bottom: 2rem;
+        }
+
+        @keyframes titleGlow {
+            0% { text-shadow: 3px 3px 6px rgba(0,0,0,0.7); }
+            100% { text-shadow: 3px 3px 6px rgba(0,0,0,0.7), 0 0 20px rgba(255,221,0,0.5); }
+        }
+
+        .content-section {
+            background: rgba(255,255,255,0.95);
+            margin: 2rem;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        /* Phần bản đồ sử dụng ảnh có sẵn */
+        .vietnam-map {
+            width: 100%;
+            max-width: 800px;
+            margin: 2rem auto;
+            position: relative;
+            text-align: center;
+        }
+
+        .vietnam-map img {
+            width: 100%;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border: 3px solid #ff0000;
+        }
+
+        .map-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .island-marker {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background-color: #ff0000;
+            border: 2px solid #ffdd00;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px rgba(255, 221, 0, 0.7);
+            animation: pulse 2s infinite;
+        }
+
+        .island-label {
+            position: absolute;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+            background: rgba(255,0,0,0.7);
+            padding: 2px 8px;
+            border-radius: 10px;
+            transform: translate(-50%, 10px);
+            white-space: nowrap;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.2); }
+        }
+
+        .ba-dinh-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin: 3rem 0;
+            align-items: center;
+        }
+
+        .ba-dinh-image {
+            width: 100%;
+            height: 500px;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ba-dinh-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('img/quang-truong-ba-dinh-2_1680149655.jpg');
+            background-size: cover;
+            opacity: 0.8;
+        }
+
+        .ba-dinh-image .text {
+            position: relative;
+            z-index: -1;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+        }
+
+        .ho-chi-minh-section {
+            text-align: center;
+            margin: 3rem 0;
+        }
+
+        .ho-chi-minh-portrait {
+            width: 250px;
+            height: 300px;
+            margin: 2rem auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            background: url('img/hinh-anh-ve-bac-ho-qua-tranh-ve-3-04-11-55-23.jpg');
+            background-size: cover;
+            background-position: center;
+            border: 5px solid #ffdd00;
+            position: relative;
+        }
+
+        .fireworks {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .firework {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #ffdd00;
+            border-radius: 50%;
+            animation: fireworkExplosion 2s ease-out infinite;
+        }
+
+        .firework:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
+        .firework:nth-child(2) { top: 30%; right: 15%; animation-delay: 0.5s; }
+        .firework:nth-child(3) { top: 15%; left: 60%; animation-delay: 1s; }
+        .firework:nth-child(4) { top: 40%; right: 25%; animation-delay: 1.5s; }
+
+        @keyframes fireworkExplosion {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+                box-shadow: 0 0 0 0 #ffdd00;
+            }
+            50% {
+                transform: scale(3);
+                opacity: 0.7;
+                box-shadow: 0 0 20px 10px rgba(255, 221, 0, 0.3);
+            }
+            100% {
+                transform: scale(5);
+                opacity: 0;
+                box-shadow: 0 0 30px 20px rgba(255, 221, 0, 0);
+            }
+        }
+
+        .quote-section {
+            background: linear-gradient(135deg, #ff0000, #ffdd00);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+            text-align: center;
+            font-style: italic;
+            font-size: 1.3rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .floating-elements {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-star {
+            position: absolute;
+            color: #ffdd00;
+            font-size: 20px;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-star:nth-child(1) { top: 10%; left: 5%; animation-delay: 0s; }
+        .floating-star:nth-child(2) { top: 20%; right: 10%; animation-delay: 1s; }
+        .floating-star:nth-child(3) { bottom: 30%; left: 15%; animation-delay: 2s; }
+        .floating-star:nth-child(4) { bottom: 10%; right: 20%; animation-delay: 3s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: #ff0000;
+            text-align: center;
+            margin: 2rem 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .description {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: #333;
+            text-align: justify;
+            margin: 1rem 0;
+        }
+
+        /* Music player styles */
+
+        /* Music player styles - Enhanced */
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 50px;
+            padding: 10px 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 2px solid #ff0000;
+            animation: musicPlayerPulse 2s infinite;
+        }
+
+        @keyframes musicPlayerPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+            50% { transform: scale(1.02); box-shadow: 0 6px 20px rgba(255,0,0,0.3); }
+        }
+
+        .music-player.playing {
+            animation: none;
+            border-color: #00ff00;
+        }
+
+        .music-player button {
+            background: #ff0000;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .music-player button:hover {
+            background: #ff3333;
+            transform: scale(1.1);
+        }
+
+        .music-player button.playing {
+            background: #00aa00;
+            animation: playingPulse 1s infinite;
+        }
+
+        @keyframes playingPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(0, 170, 0, 0.7); }
+            50% { box-shadow: 0 0 10px 5px rgba(0, 170, 0, 0.3); }
+        }
+
+        .music-info {
+            font-size: 14px;
+            color: #333;
+            font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .music-status {
+            font-size: 11px;
+            color: #ff0000;
+            font-style: italic;
+        }
+
+        .music-welcome {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #ff0000, #ffdd00);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 10001;
+            max-width: 400px;
+        }
+
+        .music-welcome-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 10000;
+        }
+
+        /* Quiz game styles */
+        .quiz-section {
+            background: linear-gradient(135deg, #ffdd00, #ff0000);
+            padding: 2rem;
+            border-radius: 20px;
+            margin: 3rem 0;
+            color: white;
+        }
+
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 1.5rem;
+            color: #333;
+        }
+
+        .quiz-progress {
+            text-align: center;
+            margin-bottom: 1rem;
+            font-weight: bold;
+            color: #ff0000;
+        }
+
+        .quiz-question {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .quiz-options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .quiz-option {
+            padding: 1rem;
+            background: #f0f0f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .quiz-option:hover {
+            background: #e0e0e0;
+            border-color: #ffdd00;
+        }
+
+        .quiz-option.selected {
+            background: #ffdd00;
+            border-color: #ff0000;
+            color: #ff0000;
+            font-weight: bold;
+        }
+
+        .quiz-option.correct {
+            background: #4caf50;
+            color: white;
+            border-color: #2e7d32;
+        }
+
+        .quiz-option.incorrect {
+            background: #f44336;
+            color: white;
+            border-color: #c62828;
+        }
+
+        .quiz-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .quiz-button {
+            padding: 0.8rem 1.5rem;
+            background: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .quiz-button:hover {
+            background: #ff3333;
+            transform: translateY(-2px);
+        }
+
+        .quiz-button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .quiz-score {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 1.5rem;
+            color: #ff0000;
+        }
+
+        .quiz-completion {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .quiz-completion h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #ff0000;
+        }
+
+        .quiz-completion p {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-title h1 { font-size: 2.5rem; }
+            .main-title h2 { font-size: 1.8rem; }
+            .ba-dinh-section { grid-template-columns: 1fr; }
+            .content-section { margin: 1rem; padding: 2rem; }
+            .vietnam-map { width: 100%; }
+            .music-player {
+                bottom: 10px;
+                left: 10px;
+                right: 10px;
+                border-radius: 10px;
+            }
+            .music-info {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="floating-elements">
+    <div class="floating-star">⭐</div>
+    <div class="floating-star">⭐</div>
+    <div class="floating-star">⭐</div>
+    <div class="floating-star">⭐</div>
+</div>
+
+<div class="fireworks">
+    <div class="firework"></div>
+    <div class="firework"></div>
+    <div class="firework"></div>
+    <div class="firework"></div>
+</div>
+
+<!-- Music player -->
+
+<!-- Music player - Enhanced -->
+<div class="music-player" id="musicPlayer">
+    <button id="playPauseBtn">▶️</button>
+    <div class="music-info">
+        <div>🎵 Còn gì đẹp hơn - Nguyễn Hùng</div>
+        <div class="music-status" id="musicStatus">Nhấn để phát nhạc</div>
+    </div>
+    <audio id="backgroundMusic" loop>
+        <source src="img/Còn Gì Đẹp Hơn (Mưa Đỏ Original Soundtrack).mp3" type="audio/mpeg">
+    </audio>
+</div>
+
+<!-- Cờ bay phấp phới -->
+<div class="flag-container">
+    <div class="flag"></div>
+</div>
+
+<div class="hero-section">
+    <div class="main-title">
+        <h1>🇻🇳 QUỐC KHÁNH VIỆT NAM 🇻🇳</h1>
+        <h2>2 THÁNG 9 - NGÀY ĐỘC LẬP</h2>
+        <p style="font-size: 1.5rem; margin-top: 1rem;">80 năm hào hùng (1945 - 2025)</p>
+    </div>
+</div>
+
+<div class="content-section">
+    <h2 class="section-title">🗺️ BẢN ĐỒ VIỆT NAM</h2>
+    <div class="vietnam-map">
+        <!-- Thay thế bằng ảnh bản đồ Việt Nam thực tế -->
+        <img src="img/ban-do-viet-nam-1.png" alt="Bản đồ Việt Nam" id="vietnamMapImage">
+
+    </div>
+    <p class="description">
+        Bản đồ Việt Nam hình chữ S uốn lượn từ Bắc vào Nam, với đầy đủ hai quần đảo Hoàng Sa và Trường Sa thiêng liêng của Tổ quốc. Đất nước ta có diện tích 331.212 km², dân số hơn 97 triệu người, là cái nôi của nền văn minh lúa nước hàng nghìn năm tuổi.
+    </p>
+
+    <div class="ba-dinh-section">
+        <div>
+            <h2 class="section-title">🏛️ QUẢNG TRƯỜNG BA ĐÌNH</h2>
+            <p class="description">
+                Quảng trường Ba Đình - nơi thiêng liêng của dân tộc Việt Nam, là nơi Chủ tịch Hồ Chí Minh đã đọc bản Tuyên ngôn Độc lập, khai sinh nước Việt Nam Dân chủ Cộng hòa vào ngày 2 tháng 9 năm 1945. Đây là trung tâm chính trị quan trọng nhất của đất nước, nơi diễn ra các sự kiện trọng đại của quốc gia.
+            </p>
+        </div>
+        <div class="ba-dinh-image">
+            <div class="text">
+                🏛️ QUẢNG TRƯỜNG BA ĐÌNH<br>
+                🏮 LĂNG CHỦ TỊCH HỒ CHÍ MINH<br>
+                ⭐ NƠI THIÊNG LIÊNG CỦA DẤT NƯỚC
+            </div>
+        </div>
+    </div>
+
+    <div class="quote-section">
+        <p>"Tất cả mọi người sinh ra đều có quyền bình đẳng. Tạo hóa cho họ những quyền không ai có thể xâm phạm được; trong những quyền ấy có quyền được sống, quyền tự do và quyền mưu cầu hạnh phúc."</p>
+        <p><strong>- Trích Tuyên ngôn Độc lập 2/9/1945</strong></p>
+    </div>
+
+    <!-- Quiz Game Section -->
+    <div class="quiz-section">
+        <h2 class="section-title" style="color: white;">🎯 TRÒ CHƠI ĐỐ VUI LỊCH SỬ</h2>
+        <p class="description" style="color: white; text-align: center;">
+            Kiểm tra kiến thức lịch sử của bạn về ngày Quốc khánh 2/9 với 10 câu hỏi thú vị!
+        </p>
+
+        <div class="quiz-container">
+            <div class="quiz-progress" id="quizProgress">Câu hỏi 1/10</div>
+            <div class="quiz-question" id="quizQuestion"></div>
+            <div class="quiz-options" id="quizOptions"></div>
+            <div class="quiz-navigation">
+                <button class="quiz-button" id="prevButton" disabled>Trước</button>
+                <button class="quiz-button" id="nextButton">Tiếp theo</button>
+            </div>
+            <div class="quiz-score" id="quizScore" style="display: none;"></div>
+
+            <div class="quiz-completion" id="quizCompletion" style="display: none;">
+                <h3>Chúc mừng! Bạn đã hoàn thành bài quiz</h3>
+                <p id="completionMessage"></p>
+                <button class="quiz-button" id="restartButton">Chơi lại</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="ho-chi-minh-section">
+        <h2 class="section-title">🌟 CHỦ TỊCH HỒ CHÍ MINH</h2>
+        <div class="ho-chi-minh-portrait"></div>
+        <p class="description">
+            Chủ tịch Hồ Chí Minh (1890-1969) - Người cha già dân tộc, lãnh tụ kính yêu của nhân dân Việt Nam. Người đã dành trọn cuộc đời mình cho sự nghiệp giải phóng dân tộc và thống nhất Tổ quốc. Tư tưởng, đạo đức, phong cách Hồ Chí Minh mãi mãi là ngọn cờ sáng dẫn đường cho dân tộc Việt Nam tiến lên.
+        </p>
+
+        <div style="background: rgba(255,0,0,0.1); padding: 2rem; border-radius: 15px; margin-top: 2rem;">
+            <h3 style="color: #ff0000; text-align: center; margin-bottom: 1rem;">Những lời dạy bất hủ của Bác</h3>
+            <ul style="list-style: none; text-align: left; max-width: 600px; margin: 0 auto;">
+                <li style="margin: 1rem 0; padding: 0.5rem; background: rgba(255,221,0,0.2); border-radius: 8px;">🌟 "Không có gì quý hơn độc lập tự do"</li>
+                <li style="margin: 1rem 0; padding: 0.5rem; background: rgba(255,221,0,0.2); border-radius: 8px;">🌟 "Đoàn kết, đoàn kết, đại đoàn kết"</li>
+                <li style="margin: 1rem 0; padding: 0.5rem; background: rgba(255,221,0,0.2); border-radius: 8px;">🌟 "Thành công, thành công, đại thành công"</li>
+                <li style="margin: 1rem 0; padding: 0.5rem; background: rgba(255,221,0,0.2); border-radius: 8px;">🌟 "Vì lợi ích mười năm phải trồng cây, vì lợi ích trăm năm phải trồng người"</li>
+            </ul>
+        </div>
+    </div>
+
+    <div style="background: linear-gradient(135deg, #ff0000, #ffdd00); color: white; padding: 3rem; border-radius: 20px; text-align: center; margin-top: 3rem;">
+        <h2 style="font-size: 2.5rem; margin-bottom: 2rem;">🎉 CHÚC MỪNG QUỐC KHÁNH 2/9 🎉</h2>
+        <p style="font-size: 1.5rem; line-height: 1.8;">
+            Hôm nay, chúng ta cùng nhau tự hào về một Việt Nam độc lập, tự do, hòa bình và phát triển.<br>
+            Từ những hy sinh của các anh hùng liệt sĩ, đất nước ta đã vươn mình trở thành một quốc gia có tiềm lực và vị thế trên trường quốc tế.
+        </p>
+        <div style="margin-top: 2rem; font-size: 3rem;">
+            🇻🇳 ❤️ 🌟 ❤️ 🇻🇳
+        </div>
+    </div>
+</div>
+
+<script>
+    // Tạo hiệu ứng pháo hoa động
+    function createFirework() {
+        const firework = document.createElement('div');
+        firework.className = 'firework';
+        firework.style.left = Math.random() * window.innerWidth + 'px';
+        firework.style.top = Math.random() * (window.innerHeight * 0.6) + 'px';
+        firework.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
+
+        document.querySelector('.fireworks').appendChild(firework);
+
+        setTimeout(() => {
+            firework.remove();
+        }, 2000);
+    }
+
+    // Tạo pháo hoa mỗi 3 giây
+    setInterval(createFirework, 3000);
+
+    // Hiệu ứng cuộn trang
+    window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        const stars = document.querySelectorAll('.floating-star');
+
+        stars.forEach((star, index) => {
+            const speed = 1 + index * 0.2;
+            star.style.transform = `translateY(${scrolled * speed}px) rotate(${scrolled * 0.1}deg)`;
+        });
+    });
+
+    // Hàm để thay đổi ảnh bản đồ
+    function changeMapImage(imageUrl) {
+        document.getElementById('vietnamMapImage').src = imageUrl;
+    }
+
+    // Music player functionality - Enhanced
+    const audio = document.getElementById('backgroundMusic');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const musicPlayer = document.getElementById('musicPlayer');
+    const musicStatus = document.getElementById('musicStatus');
+    let isPlaying = false;
+    let userHasInteracted = false;
+
+    // Hiển thị lời chào mời nghe nhạc
+    function showMusicWelcome() {
+        const welcomeOverlay = document.createElement('div');
+        welcomeOverlay.className = 'music-welcome-overlay';
+
+        const welcomeBox = document.createElement('div');
+        welcomeBox.className = 'music-welcome';
+        welcomeBox.innerHTML = `
+        <div style="font-size: 3rem; margin-bottom: 1rem;">🎵</div>
+        <h3 style="margin-bottom: 1rem;">Chào mừng đến với trang Quốc Khánh 2/9!</h3>
+        <p style="margin-bottom: 1.5rem; line-height: 1.6;">
+            Để có trải nghiệm tốt nhất, bạn có muốn nghe nhạc nền
+            <strong>"Còn gì đẹp hơn"</strong> không?
+        </p>
+        <div style="display: flex; gap: 1rem; justify-content: center;">
+            <button onclick="startMusic()" style="
+                background: white;
+                color: #ff0000;
+                border: none;
+                padding: 0.8rem 1.5rem;
+                border-radius: 10px;
+                font-weight: bold;
+                cursor: pointer;
+                font-size: 1rem;
+            ">🎵 Có, tôi muốn nghe nhạc</button>
+            <button onclick="skipMusic()" style="
+                background: rgba(255,255,255,0.3);
+                color: white;
+                border: 1px solid white;
+                padding: 0.8rem 1.5rem;
+                border-radius: 10px;
+                font-weight: bold;
+                cursor: pointer;
+                font-size: 1rem;
+            ">🔇 Bỏ qua</button>
+        </div>
+    `;
+
+        welcomeOverlay.appendChild(welcomeBox);
+        document.body.appendChild(welcomeOverlay);
+    }
+
+    // Bắt đầu phát nhạc
+    function startMusic() {
+        audio.play().then(() => {
+            isPlaying = true;
+            userHasInteracted = true;
+            playPauseBtn.innerHTML = '⏸️';
+            playPauseBtn.classList.add('playing');
+            musicPlayer.classList.add('playing');
+            musicStatus.textContent = '🎵 Đang phát';
+
+            // Xóa welcome dialog
+            document.querySelector('.music-welcome-overlay').remove();
+
+            // Hiển thị thông báo thành công
+            showMusicNotification('🎵 Đã bắt đầu phát nhạc nền!', 'success');
+        }).catch(e => {
+            console.log('Không thể phát nhạc:', e);
+            showMusicNotification('❌ Không thể phát nhạc. Vui lòng thử lại!', 'error');
+        });
+    }
+
+    // Bỏ qua nhạc
+    function skipMusic() {
+        userHasInteracted = true;
+        musicStatus.textContent = '🔇 Đã tắt nhạc';
+        document.querySelector('.music-welcome-overlay').remove();
+        showMusicNotification('🔇 Đã tắt nhạc nền', 'info');
+    }
+
+    // Hiển thị thông báo nhạc
+    function showMusicNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        background: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : '#2196F3'};
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        z-index: 10002;
+        font-weight: bold;
+        animation: slideIn 0.3s ease-out;
+    `;
+        notification.textContent = message;
+
+        // Thêm animation CSS
+        const style = document.createElement('style');
+        style.textContent = `
+        @keyframes slideIn {
+            0% { transform: translateX(100%); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            0% { transform: translateX(0); opacity: 1; }
+            100% { transform: translateX(100%); opacity: 0; }
+        }
+    `;
+        document.head.appendChild(style);
+
+        document.body.appendChild(notification);
+
+        // Tự động ẩn sau 3 giây
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease-in';
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 300);
+        }, 3000);
+    }
+
+    // Xử lý nút play/pause
+    playPauseBtn.addEventListener('click', function() {
+        if (!userHasInteracted) {
+            showMusicWelcome();
+            return;
+        }
+
+        if (isPlaying) {
+            audio.pause();
+            playPauseBtn.innerHTML = '▶️';
+            playPauseBtn.classList.remove('playing');
+            musicPlayer.classList.remove('playing');
+            musicStatus.textContent = '⏸️ Đã tạm dừng';
+            showMusicNotification('⏸️ Đã tạm dừng nhạc', 'info');
+        } else {
+            audio.play().then(() => {
+                playPauseBtn.innerHTML = '⏸️';
+                playPauseBtn.classList.add('playing');
+                musicPlayer.classList.add('playing');
+                musicStatus.textContent = '🎵 Đang phát';
+                showMusicNotification('▶️ Tiếp tục phát nhạc', 'success');
+            }).catch(e => {
+                console.log('Lỗi khi phát nhạc:', e);
+                showMusicNotification('❌ Không thể phát nhạc!', 'error');
+            });
+        }
+        isPlaying = !isPlaying;
+    });
+
+    // Hiện welcome dialog khi trang tải xong
+    window.addEventListener('load', function() {
+        setTimeout(() => {
+            if (!userHasInteracted) {
+                showMusicWelcome();
+            }
+        }, 2000); // Hiển thị sau 2 giây
+    });
+
+    // Theo dõi trạng thái audio
+    audio.addEventListener('play', () => {
+        isPlaying = true;
+        playPauseBtn.innerHTML = '⏸️';
+        playPauseBtn.classList.add('playing');
+        musicPlayer.classList.add('playing');
+        musicStatus.textContent = '🎵 Đang phát';
+    });
+
+    audio.addEventListener('pause', () => {
+        isPlaying = false;
+        playPauseBtn.innerHTML = '▶️';
+        playPauseBtn.classList.remove('playing');
+        musicPlayer.classList.remove('playing');
+        musicStatus.textContent = '⏸️ Đã tạm dừng';
+    });
+
+    audio.addEventListener('ended', () => {
+        // Nhạc sẽ tự động lặp lại do có thuộc tính loop
+        showMusicNotification('🔄 Đang lặp lại nhạc', 'info');
+    });
+
+    // Quiz game data and functionality
+    const quizData = [
+        {
+            question: "Ngày Quốc khánh Việt Nam là ngày nào?",
+            options: [
+                "30/4/1975",
+                "2/9/1945",
+                "19/5/1890",
+                "10/10/1954"
+            ],
+            correct: 1
+        },
+        {
+            question: "Ai là người đọc bản Tuyên ngôn Độc lập vào ngày 2/9/1945?",
+            options: [
+                "Phạm Văn Đồng",
+                "Võ Nguyên Giáp",
+                "Hồ Chí Minh",
+                "Trường Chinh"
+            ],
+            correct: 2
+        },
+        {
+            question: "Tại đâu Chủ tịch Hồ Chí Minh đọc Tuyên ngôn Độc lập?",
+            options: [
+                "Quảng Trường Ba Đình, Hà Nội",
+                "Cột cờ Hà Nội",
+                "Phủ Chủ tịch",
+                "Nhà hát Lớn Hà Nội"
+            ],
+            correct: 0
+        },
+        {
+            question: "Bản Tuyên ngôn Độc lập khai sinh ra nước nào?",
+            options: [
+                "Việt Nam Dân chủ Cộng hòa",
+                "Cộng hòa Xã hội Chủ nghĩa Việt Nam",
+                "Đế quốc Việt Nam",
+                "Liên bang Đông Dương"
+            ],
+            correct: 0
+        },
+        {
+            question: "Câu mở đầu 'Tất cả mọi người đều sinh ra có quyền bình đẳng. Tạo hóa cho họ những quyền không ai có thể xâm phạm được; trong những quyền ấy, có quyền được sống, quyền tự do và quyền mưu cầu hạnh phúc' của bản Tuyên ngôn Độc lập trích dẫn từ tuyên ngôn của nước nào?",
+            options: [
+                "Tuyên ngôn Độc lập Mỹ",
+                "Tuyên ngôn Nhân quyền và Dân quyền Pháp",
+                "Cả hai đáp án trên",
+                "Tuyên ngôn Giải phóng dân tộc"
+            ],
+            correct: 2
+        },
+        {
+            question: "Năm 2025 kỷ niệm bao nhiêu năm Ngày Quốc khánh?",
+            options: [
+                "70 năm",
+                "75 năm",
+                "80 năm",
+                "85 năm"
+            ],
+            correct: 2
+        },
+        {
+            question: "Sự kiện nào diễn ra trước ngày 2/9/1945?",
+            options: [
+                "Chiến thắng Điện Biên Phủ",
+                "Cách mạng tháng Tám thành công",
+                "Hiệp định Genève được ký kết",
+                "Quân ta tiến vào Sài Gòn"
+            ],
+            correct: 1
+        },
+        {
+            question: "Ngày 2/9/1945 đánh dấu sự kiện gì trong lịch sử Việt Nam?",
+            options: [
+                "Kết thúc chiến tranh Đông Dương",
+                "Kết thúc chiến tranh Việt Nam",
+                "Khai sinh nước Việt Nam độc lập",
+                "Thống nhất đất nước"
+            ],
+            correct: 2
+        },
+        {
+            question: "Lá cờ xuất hiện trong ngày 2/9/1945 là cờ gì?",
+            options: [
+                "Cờ đỏ sao vàng",
+                "Cờ vàng ba que",
+                "Cờ của Mặt trận Việt Minh",
+                "Cờ của Liên bang Đông Dương"
+            ],
+            correct: 0
+        },
+        {
+            question: "Sau khi đọc Tuyên ngôn Độc lập, Chính phủ lâm thời đã ra mắt và tuyên thề với ai?",
+            options: [
+                "Quốc hội",
+                "Toàn thể quốc dân và thế giới",
+                "Liên Hợp Quốc",
+                "Các nước đồng minh"
+            ],
+            correct: 1
+        }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let userAnswers = new Array(quizData.length).fill(null);
+
+    const quizProgress = document.getElementById('quizProgress');
+    const quizQuestion = document.getElementById('quizQuestion');
+    const quizOptions = document.getElementById('quizOptions');
+    const prevButton = document.getElementById('prevButton');
+    const nextButton = document.getElementById('nextButton');
+    const quizScore = document.getElementById('quizScore');
+    const quizCompletion = document.getElementById('quizCompletion');
+    const completionMessage = document.getElementById('completionMessage');
+    const restartButton = document.getElementById('restartButton');
+
+    function loadQuestion() {
+        const currentQuizData = quizData[currentQuestion];
+        quizProgress.textContent = `Câu hỏi ${currentQuestion + 1}/${quizData.length}`;
+        quizQuestion.textContent = currentQuizData.question;
+
+        quizOptions.innerHTML = '';
+        currentQuizData.options.forEach((option, index) => {
+            const optionElement = document.createElement('div');
+            optionElement.classList.add('quiz-option');
+            if (userAnswers[currentQuestion] === index) {
+                optionElement.classList.add('selected');
+            }
+            optionElement.textContent = option;
+            optionElement.dataset.index = index;
+            optionElement.addEventListener('click', selectOption);
+            quizOptions.appendChild(optionElement);
+        });
+
+        updateNavigationButtons();
+    }
+
+    function selectOption(e) {
+        const selectedOption = e.target;
+        const options = quizOptions.querySelectorAll('.quiz-option');
+
+        options.forEach(option => {
+            option.classList.remove('selected');
+        });
+
+        selectedOption.classList.add('selected');
+        userAnswers[currentQuestion] = parseInt(selectedOption.dataset.index);
+
+        updateNavigationButtons();
+    }
+
+    function updateNavigationButtons() {
+        prevButton.disabled = currentQuestion === 0;
+
+        if (currentQuestion === quizData.length - 1) {
+            nextButton.textContent = 'Kết thúc';
+        } else {
+            nextButton.textContent = 'Tiếp theo';
+        }
+
+        nextButton.disabled = userAnswers[currentQuestion] === null;
+    }
+
+    function showNextQuestion() {
+        if (currentQuestion < quizData.length - 1) {
+            currentQuestion++;
+            loadQuestion();
+        } else {
+            calculateScore();
+            showResults();
+        }
+    }
+
+    function showPrevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function calculateScore() {
+        score = 0;
+        userAnswers.forEach((answer, index) => {
+            if (answer === quizData[index].correct) {
+                score++;
+            }
+        });
+    }
+
+    function showResults() {
+        document.querySelector('.quiz-container').style.display = 'none';
+        quizScore.style.display = 'block';
+        quizCompletion.style.display = 'block';
+
+        quizScore.textContent = `Bạn đạt ${score}/${quizData.length} điểm`;
+
+        let completionText = '';
+        let notificationTitle = '';
+        let notificationIcon = '';
+
+        if (score >= 8) {
+            completionText = 'Kiến thức lịch sử của bạn thật tuyệt vời! Bạn xứng đáng nhận danh hiệu "Nhà sử học tương lai".';
+            notificationTitle = '🎉 XUẤT SẮC!';
+            notificationIcon = '🏆';
+        } else if (score >= 5) {
+            completionText = 'Kiến thức lịch sử của bạn khá đấy! Hãy tìm hiểu thêm để nâng cao hiểu biết về lịch sử dân tộc.';
+            notificationTitle = '👍 KHÁ TỐT!';
+            notificationIcon = '⭐';
+        } else {
+            completionText = 'Hãy dành thời gian tìm hiểu thêm về lịch sử dân tộc Việt Nam nhé!';
+            notificationTitle = '📚 CẦN CỐ GẮNG THÊM!';
+            notificationIcon = '💪';
+        }
+
+        completionMessage.textContent = completionText;
+
+        // Hiển thị thông báo điểm số với hiệu ứng đặc biệt
+        showScoreNotification(score, quizData.length, notificationTitle, notificationIcon);
+
+        // Tạo hiệu ứng pháo hoa khi hoàn thành
+        celebrateCompletion();
+    }
+
+    // Hàm hiển thị thông báo điểm số
+    function showScoreNotification(userScore, totalQuestions, title, icon) {
+        // Tạo element thông báo
+        const notification = document.createElement('div');
+        notification.innerHTML = `
+        <div style="
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #ff0000, #ffdd00);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 10000;
+            min-width: 300px;
+            animation: scorePopup 0.5s ease-out;
+        ">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">${icon}</div>
+            <h2 style="font-size: 2rem; margin-bottom: 1rem;">${title}</h2>
+            <div style="font-size: 2.5rem; font-weight: bold; margin-bottom: 1rem; color: #ffdd00;">
+                ${userScore}/${totalQuestions} ĐIỂM
+            </div>
+            <div style="font-size: 1.2rem; margin-bottom: 1.5rem;">
+                Tỷ lệ đúng: ${Math.round((userScore/totalQuestions) * 100)}%
+            </div>
+            <button onclick="this.parentElement.parentElement.remove()" style="
+                background: white;
+                color: #ff0000;
+                border: none;
+                padding: 0.8rem 1.5rem;
+                border-radius: 10px;
+                font-weight: bold;
+                cursor: pointer;
+                font-size: 1rem;
+            ">Đóng thông báo</button>
+        </div>
+        <div style="
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 9999;
+        " onclick="this.parentElement.remove()"></div>
+    `;
+
+        // Thêm CSS animation
+        const style = document.createElement('style');
+        style.textContent = `
+        @keyframes scorePopup {
+            0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+    `;
+        document.head.appendChild(style);
+
+        document.body.appendChild(notification);
+
+        // Tự động đóng thông báo sau 10 giây
+        setTimeout(() => {
+            if (notification.parentElement) {
+                notification.remove();
+            }
+        }, 10000);
+    }
+
+    // Hàm tạo hiệu ứng ăn mừng
+    function celebrateCompletion() {
+        // Tạo nhiều pháo hoa hơn
+        for (let i = 0; i < 10; i++) {
+            setTimeout(() => {
+                createFirework();
+            }, i * 300);
+        }
+
+        // Hiệu ứng rung động nhẹ cho trang
+        document.body.style.animation = 'celebrate 0.5s ease-in-out';
+
+        // Thêm CSS cho animation celebrate
+        const celebrateStyle = document.createElement('style');
+        celebrateStyle.textContent = `
+        @keyframes celebrate {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-2px); }
+            75% { transform: translateX(2px); }
+        }
+    `;
+        document.head.appendChild(celebrateStyle);
+
+        // Xóa animation sau khi hoàn thành
+        setTimeout(() => {
+            document.body.style.animation = '';
+        }, 500);
+    }
+
+    function restartQuiz() {
+        currentQuestion = 0;
+        score = 0;
+        userAnswers.fill(null);
+
+        document.querySelector('.quiz-container').style.display = 'block';
+        quizScore.style.display = 'none';
+        quizCompletion.style.display = 'none';
+
+        loadQuestion();
+    }
+
+    prevButton.addEventListener('click', showPrevQuestion);
+    nextButton.addEventListener('click', showNextQuestion);
+    restartButton.addEventListener('click', restartQuiz);
+
+    // Initialize the quiz
+    loadQuestion();
+
+    // Gợi ý: Sử dụng hàm này khi muốn thay đổi ảnh bản đồ
+    // changeMapImage('đường-dẫn-đến-ảnh-mới.jpg');
+</script>
+</body>
+</html>
